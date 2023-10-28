@@ -5,7 +5,7 @@
 	update = merge
 [submodule "External/NRI"]
 	path = External/NRI
-	url = https://github.com/NVIDIAGameWorks/NRI.git
+	url = git@github.com:johnpars/NRI.git
 	branch = main
 	update = merge
 [submodule "External/ShaderMake"]
