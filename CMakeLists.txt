@@ -49,6 +49,8 @@ endif ()
 # Compile definitions
 if (WIN32)
     set (COMPILE_DEFINITIONS WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS _UNICODE UNICODE GLFW_EXPOSE_NATIVE_WIN32 GLFW_INCLUDE_NONE)
+elseif (APPLE)
+    set (COMPILE_DEFINITIONS GLFW_EXPOSE_NATIVE_COCOA GLFW_INCLUDE_NONE)
 else ()
     set (COMPILE_DEFINITIONS GLFW_EXPOSE_NATIVE_X11 GLFW_INCLUDE_NONE)
 endif ()
@@ -90,25 +92,24 @@ add_subdirectory ("External/Glfw")
 set_property (TARGET glfw PROPERTY FOLDER "${PROJECT_NAME}/External")
 set_property (TARGET update_mappings PROPERTY FOLDER "${PROJECT_NAME}/External")
 
+# Objective-C Metal Utility
+find_library(COCOA_LIBRARY Cocoa REQUIRED)
+find_library(QUARTZ_CORE QuartzCore REQUIRED)
+add_library(MetalUtility SHARED Source/MetalUtility/MetalUtility.m)
+target_link_libraries(MetalUtility ${QUARTZ_CORE} ${COCOA_LIBRARY} glfw)
+
 # NRIFramework
 file (GLOB FRAMEWORK_SOURCE "Source/*.cpp" "Source/*.h")
 source_group ("Source" FILES ${FRAMEWORK_SOURCE})
 file (GLOB FRAMEWORK_HEADERS "Include/*.hpp" "Include/*.h")
 source_group ("Include" FILES ${FRAMEWORK_HEADERS})
 add_library (${PROJECT_NAME} STATIC ${FRAMEWORK_SOURCE} ${FRAMEWORK_HEADERS} ${MATHLIB_HEADERS})
-target_link_libraries (${PROJECT_NAME} PRIVATE imgui detex glfw)
-
-if (UNIX)
-    target_link_libraries (${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS} pthread X11)
-endif ()
+target_link_libraries (${PROJECT_NAME} PRIVATE imgui detex glfw MetalUtility)
 
 if (APPLE)
-    # NOTE: brew install libx11, brew install libxrandr
-    find_package(X11 REQUIRED)
-    
-    target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIR})
-    target_link_libraries (${PROJECT_NAME} PRIVATE ${X11_LIBRARIES})
     target_link_libraries (${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS} pthread)
+elseif(UNIX)
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS} pthread X11)
 endif ()
 
 target_include_directories (${PROJECT_NAME} PRIVATE "Source" "Include" "External" "External/NRI/Include")

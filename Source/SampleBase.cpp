@@ -10,6 +10,11 @@ license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 #include "NRIFramework.h"
 
+#ifdef __APPLE__
+    #define GLFW_EXPOSE_NATIVE_COCOA
+    #include "MetalUtility/MetalUtility.h"
+#endif
+
 #include "Glfw/include/GLFW/glfw3native.h"
 
 #if __linux__ || __APPLE__
@@ -159,6 +164,8 @@ nri::WindowSystemType SampleBase::GetWindowSystemType() const
 {
 #if _WIN32
     return nri::WindowSystemType::WINDOWS;
+#elif __APPLE__
+    return nri::WindowSystemType::METAL;
 #else
     return nri::WindowSystemType::X11;
 #endif
@@ -800,6 +807,8 @@ bool SampleBase::Create(int32_t argc, char** argv, const char* windowTitle)
     #elif __linux__
         m_NRIWindow.x11.dpy = glfwGetX11Display();
         m_NRIWindow.x11.window = glfwGetX11Window(m_Window);
+    #elif __APPLE__
+        m_NRIWindow.metal.caMetalLayer = GetMetalLayer(m_Window);
     #endif
 
     // Main initialization
