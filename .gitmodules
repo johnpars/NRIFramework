@@ -1,6 +1,6 @@
 [submodule "External/MathLib"]
 	path = External/MathLib
-	url = https://github.com/NVIDIAGameWorks/MathLib.git
+	url = git@github.com:johnpars/MathLib.git
 	branch = main
 	update = merge
 [submodule "External/NRI"]
