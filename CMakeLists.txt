@@ -102,6 +102,15 @@ if (UNIX)
     target_link_libraries (${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS} pthread X11)
 endif ()
 
+if (APPLE)
+    # NOTE: brew install libx11, brew install libxrandr
+    find_package(X11 REQUIRED)
+    
+    target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIR})
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${X11_LIBRARIES})
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS} pthread)
+endif ()
+
 target_include_directories (${PROJECT_NAME} PRIVATE "Source" "Include" "External" "External/NRI/Include")
 target_compile_definitions (${PROJECT_NAME} PRIVATE ${COMPILE_DEFINITIONS})
 target_compile_options (${PROJECT_NAME} PRIVATE ${COMPILE_OPTIONS})

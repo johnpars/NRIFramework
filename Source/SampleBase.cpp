@@ -12,7 +12,7 @@ license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 #include "Glfw/include/GLFW/glfw3native.h"
 
-#if __linux__
+#if __linux__ || __APPLE__
     #include <csignal>
 #endif
 
